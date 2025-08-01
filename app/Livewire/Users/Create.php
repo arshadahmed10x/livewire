@@ -8,28 +8,35 @@ use Livewire\Component;
 
 class Create extends Component
 {
-
     public $username = '';
     public $takenUsernames = [];
 
-    // public function mount()
-    // {
-    //     // Initialize taken usernames if needed
-    //     $this->takenUsernames = User::pluck('name')->toArray();
-    // }
-
     public function save()
     {
-        User::create([
-            'name' => $this->username,
+        $this->validate([
+            'username' => 'required|min:3|unique:users,username',
         ]);
-        $this->username = ''; // Reset input after saving
+
+        User::create([
+            'username' => $this->username,
+            'name' => $this->username,
+            'email' => $this->username . '@example.com',
+            'password' => Hash::make('password'),
+        ]);
+
         session()->flash('users.create', 'User created successfully.');
+        
+        // The property is cleared on the server...
+        $this->username = '';
+
+        // ... and we also dispatch an event to clear the input on the client.
+        $this->dispatch('user-saved');
     }
+
     public function render()
     {
-        return view('livewire.users.create', [
-            'takenUsernames' => $this->takenUsernames,
-        ]);
+        $this->takenUsernames = User::pluck('name')->toArray();
+
+        return view('livewire.users.create');
     }
 }

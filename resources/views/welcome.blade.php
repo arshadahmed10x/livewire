@@ -21,7 +21,7 @@
 </head>
 
 <body class="antialiased font-sans">
-    {{-- <livewire:register /> --}}
+    <!-- <livewire:register />  -->
     <livewire:users.create />
 </body>
 
